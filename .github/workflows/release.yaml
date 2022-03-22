@@ -1,4 +1,4 @@
-name: Release Helm Chart (Manually)
+name: Release Helm Chart
 
 on:
   push:
@@ -8,6 +8,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -28,3 +30,7 @@ jobs:
         with:
           body_path: ${{ github.workspace }}-CHANGELOG.txt
           files: dist/*
+
+      - name: Trigger Index Helm Chart Workflow
+        run: |
+          gh workflow run index_helm_charts.yaml --repo p-le/devops-helm-charts
