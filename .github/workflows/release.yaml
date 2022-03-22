@@ -1,0 +1,24 @@
+name: Release Helm Chart (Manually)
+
+on: push
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.7.1
+
+      - name: Package Chart
+        run: mkdir -p dist && helm package ./todoapp -d dist
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: dist/*
