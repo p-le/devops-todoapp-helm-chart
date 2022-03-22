@@ -1,6 +1,9 @@
 name: Release Helm Chart (Manually)
 
-on: push
+on:
+  push:
+    tags:
+      - '*'
 
 jobs:
   release:
@@ -8,7 +11,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        
+
       - name: Install Helm
         uses: azure/setup-helm@v1
         with:
