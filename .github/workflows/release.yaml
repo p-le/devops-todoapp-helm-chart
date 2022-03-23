@@ -9,6 +9,8 @@ jobs:
   release:
     runs-on: ubuntu-latest
     env:
+      # Using Personal Accecc Token to trigger Workflow in other Repository.
+      # GITHUB_TOKEN only work with current repository only.
       GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
     steps:
       - name: Checkout
@@ -31,6 +33,7 @@ jobs:
           body_path: ${{ github.workspace }}-CHANGELOG.txt
           files: dist/*
 
+      # Trigger workflow to index latest Release
       - name: Trigger Index Helm Chart Workflow
         run: |
           gh workflow run index_helm_charts.yaml --repo p-le/devops-helm-charts
