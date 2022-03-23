@@ -1,7 +1,10 @@
 apiVersion: v2
 name: todoapp
-description: A Helm chart for TodoApp Kubernetes on GKE
+description: A Helm chart for TodoApp Stack
 
+keywords:
+  - todoapp
+  - fullstackage
 # A chart can be either an 'application' or a 'library' chart.
 #
 # Application charts are a collection of templates that can be packaged into versioned archives
@@ -12,10 +15,20 @@ description: A Helm chart for TodoApp Kubernetes on GKE
 # pipeline. Library charts do not define any templates and therefore cannot be deployed.
 type: application
 
+maintainers:
+  - name: Phu Le
+    email: phu.le.dev@gmail.com
+    url: https://fullstackage.phu-le.dev/
+
+sources:
+  - https://github.com/p-le/devops-todoapp-infra-v2
+  - https://github.com/p-le/devops-todoapp-backend
+  - https://github.com/p-le/devops-todoapp-frontend
+  - https://github.com/p-le/devops-todoapp-manifests
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 1.0.1
+version: 1.0.2
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to

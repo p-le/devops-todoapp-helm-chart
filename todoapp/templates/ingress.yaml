@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: external
+  annotations:
+    {{- if .Capabilities.APIVersions.Has "cloud.google.com/v1" }}
+    kubernetes.io/ingress.global-static-ip-name: {{ .Values.gcpIngressExternalIP.name }}
+    {{- end }}
+spec:
+  defaultBackend:
+    service:
+      name: {{ .Release.Name }}-frontend-service
+      port:
+        number: 80
+  rules:
+  - http:
+      paths:
+      - path: /apis/*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: {{ .Release.Name }}-backend-service
+            port:
+              number: 80

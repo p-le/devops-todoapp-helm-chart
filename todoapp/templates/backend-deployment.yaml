@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-backend
+spec:
+  replicas: {{ default 2 .Values.replicaCountBackend }}
+  selector:
+    matchLabels:
+      role: backend
+  template:
+    metadata:
+      labels:
+        role: backend
+    spec:
+      serviceAccountName: {{ default "backend-sa" .Values.backendServiceAccount }}
+      nodeSelector:
+        {{- if .Capabilities.APIVersions.Has "cloud.google.com/v1" }}
+        iam.gke.io/gke-metadata-server-enabled: "true"
+        {{- end }}
+      containers:
+        - name: backend
+          image: {{ .Values.backendImage.registry }}/{{ .Values.backendImage.repository }}:{{ .Values.backendImage.tag }}
+          imagePullPolicy: {{ .Values.backendImage.pullPolicy }}
+          env:
+            - name: DB_HOST
+              value: 127.0.0.1:3306
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: user
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: password
+            - name: LOG_LEVEL
+              value: debug
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 3
+        {{- if .Capabilities.APIVersions.Has "cloud.google.com/v1" }}
+        - name: cloudsql-proxy
+          image: gcr.io/cloudsql-docker/gce-proxy:1.11
+          command:
+            - /cloud_sql_proxy
+            - -instances=$(INSTANCES)=tcp:3306
+          env:
+            - name: INSTANCES
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: connection_name
+          securityContext:
+            runAsUser: 2
+            allowPrivilegeEscalation: false
+        {{- end }}
+      restartPolicy: Always
