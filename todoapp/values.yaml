@@ -6,6 +6,7 @@ replicaCountFrontend: 2
 replicaCountBackend: 2
 
 backendServiceAccount: "backend-sa"
+workloadIdentityServiceAccountEmail: "placeholder@gserviceaccount.com"
 
 frontendImage:
   registry: "docker.io"
